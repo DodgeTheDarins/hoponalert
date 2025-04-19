@@ -14,6 +14,7 @@
 # along with Minecraft Server Checker. If not, see <https://www.gnu.org/licenses/>.
 
 import os
+import sys
 import time
 import json
 from notifier import Notifier
@@ -28,11 +29,13 @@ def main():
         config = json.load(config_file)
 
     server_address = config['server_address']
+    timer = config.get('timer', 300)  # Default to 5 minutes if not specified
     notifier = Notifier(config['notification'])
     list_players = config.get('list_players', False)  # Default to False if not specified
 
     # Track the previous state of the server
     players_detected = False
+    last_player_names = []
 
     while True:
         server_status, player_list = check_server_status(server_address)
@@ -40,19 +43,30 @@ def main():
         # Always extract player_names from player_list
         player_names = [player['name'] if isinstance(player, dict) and 'name' in player else str(player) for player in player_list]
 
+        # Notify if players appear, disappear, or the list changes
         if server_status > 0:
-            if not players_detected:
-                # Send notification only if players were not previously detected
+            if player_names == last_player_names and players_detected: 
+                print("No new players detected.")
+            if not players_detected or player_names != last_player_names:
                 notifier.send_notification(server_status, player_names if list_players else None)
                 players_detected = True
-
-            if list_players:
+                last_player_names = player_names.copy()
+            if list_players and server_status > 1:
                 print(f"Players online: {', '.join(player_names) if player_names else 'No players listed'}")
+            elif server_status == 1:
+                print(f"Player online: {', '.join(player_names) if player_names else 'No players listed'}")
         else:
-            # Reset the flag when no players are detected
-            players_detected = False
+            if players_detected:
+                players_detected = False
+                last_player_names = []
+            notifier.send_notification(server_status, None)
 
-        time.sleep(300)  # Wait for 5 minutes
+        for i in range(timer):
+            sys.stdout.write(f"\rWaiting {timer - i} seconds before checking again...   ")
+            sys.stdout.flush()
+            time.sleep(1)
+        sys.stdout.write(f"\rChecking now...                                         ")
+        print("\n")
 
 if __name__ == "__main__":
     main()

@@ -3,5 +3,6 @@
   "notification": {
     "enabled": true
   },
-  "list_players": true
+  "list_players": true,
+  "timer": 300
 }
