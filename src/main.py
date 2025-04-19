@@ -29,18 +29,25 @@ def main():
 
     server_address = config['server_address']
     notifier = Notifier(config['notification'])
+    list_players = config.get('list_players', False)  # Default to False if not specified
 
     # Track the previous state of the server
     players_detected = False
 
     while True:
-        server_status = check_server_status(server_address)
+        server_status, player_list = check_server_status(server_address)
+
+        # Always extract player_names from player_list
+        player_names = [player['name'] if isinstance(player, dict) and 'name' in player else str(player) for player in player_list]
 
         if server_status > 0:
             if not players_detected:
                 # Send notification only if players were not previously detected
-                notifier.send_notification(server_status)
+                notifier.send_notification(server_status, player_names if list_players else None)
                 players_detected = True
+
+            if list_players:
+                print(f"Players online: {', '.join(player_names) if player_names else 'No players listed'}")
         else:
             # Reset the flag when no players are detected
             players_detected = False

@@ -20,8 +20,12 @@ class Notifier:
     def __init__(self, notification_config):
         self.notification_config = notification_config
 
-    def send_notification(self, active_players):
-        message = f"Active players detected: {active_players}"
+    def send_notification(self, active_players, player_names=None):
+        if player_names is not None:
+            players_str = f"Players online: {', '.join(player_names) if player_names else 'No players listed'}"
+            message = f"Active players detected: {active_players}\n{players_str}"
+        else:
+            message = f"Active players detected: {active_players}"
         notification.notify(
             title="Minecraft Server Checker",
             message=message,

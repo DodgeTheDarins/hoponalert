@@ -2,5 +2,6 @@
   "server_address": "photography-builder.gl.joinmc.link",
   "notification": {
     "enabled": true
-  }
+  },
+  "list_players": true
 }

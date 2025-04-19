@@ -20,21 +20,25 @@ def check_server_status(server_address):
     try:
         # Use the correct API endpoint and include a User-Agent header
         headers = {"User-Agent": "MinecraftServerChecker/1.0"}
-        # headers = ""
         response = requests.get(f'https://api.mcsrvstat.us/3/{server_address}', headers=headers)
         
         # Ensure the response is valid JSON
         response.raise_for_status()
         data = response.json()
-        # print(data)
 
         if data.get('online'):
-            player_count = data['players'].get('online')
+            player_count = data['players'].get('online', 0)
+            player_list = data['players'].get('list', [])
+            
+            # Extract player names if player_list contains dictionaries
+            player_names = [player['name'] if isinstance(player, dict) and 'name' in player else str(player) for player in player_list]
+            
+            # Print player count and list
             print(f"{player_count} players online for server {server_address}")
-            # Check if the server is online and return the player count
-            return player_count
+            return player_count, player_names
         else:
-            return 0
+            print(f"Server {server_address} is offline.")
+            return 0, []
     except requests.exceptions.RequestException as e:
         print(f"Error checking server status: {e}")
-        return 0
+        return 0, []
