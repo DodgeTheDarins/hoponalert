@@ -48,4 +48,4 @@ The application will check the server status every 5 minutes and send notificati
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for more details.
+This project is licensed under the GNU General Public License v3.0. See the [LICENSE](./LICENSE) file for more details.
