@@ -12,20 +12,20 @@ This project is a simple application that checks the status of a Minecraft serve
 
 ```
 minecraft-server-checker
-├── src
-│   ├── main.py          # Entry point of the application
-│   ├── notifier.py      # Handles sending notifications
-│   └── utils.py         # Utility functions for server status checks
-├── requirements.txt     # Project dependencies
-├── config.json          # Configuration settings
-└── README.md            # Project documentation
+????????? src
+???   ????????? main.py          # Entry point of the application
+???   ????????? notifier.py      # Handles sending notifications
+???   ????????? utils.py         # Utility functions for server status checks
+????????? requirements.txt     # Project dependencies
+????????? config.json          # Configuration settings
+????????? README.md            # Project documentation
 ```
 
 ## Installation
 
 1. Clone the repository:
    ```
-   git clone <repository-url>
+   git clone https://github.com/DodgeTheDarins/hoponalert
    cd minecraft-server-checker
    ```
 
