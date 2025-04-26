@@ -41,16 +41,25 @@ def main():
         server_status, player_list = check_server_status(server_address)
 
         # Always extract player_names from player_list
-        player_names = [player['name'] if isinstance(player, dict) and 'name' in player else str(player) for player in player_list]
+        player_names = []
+        for player in player_list:
+            name = None  # Initialize name to avoid unbound variable
+            if isinstance(player, dict):
+                name = player.get('name')
+            if name is not None:
+                player_names.append(str(name))
+            else:
+                player_names.append(str(player))
 
         # Notify if players appear, disappear, or the list changes
         if server_status > 0:
+            players_detected = True
             if player_names == last_player_names and players_detected: 
                 print("No new players detected.")
-            if not players_detected or player_names != last_player_names:
+            elif not players_detected or player_names != last_player_names:
                 notifier.send_notification(server_status, player_names if list_players else None)
-                players_detected = True
                 last_player_names = player_names.copy()
+                # print("notifying")
             if list_players and server_status > 1:
                 print(f"Players online: {', '.join(player_names) if player_names else 'No players listed'}")
             elif server_status == 1:
