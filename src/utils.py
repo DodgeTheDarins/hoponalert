@@ -22,7 +22,7 @@ def check_server_status(server_address):
         player_count = status.players.online
         latency = status.latency
         player_names = [player.name for player in status.players.sample] if status.players.sample else []
-        print(f"{player_count} players online for server {server_address} | Latency: {latency:.2f} ms")
+        # print(f"{player_count} players online for server {server_address} | Latency: {latency:.2f} ms")
         return player_count, player_names, round(latency)
     except Exception as e:
         print(f"Error checking server status: {e}")
