@@ -37,18 +37,21 @@ def main():
 
     # Track the previous state of the server
     players_detected = False
-    last_player_names = []
+    last_player_names = ["random set of names so that it never matches at the start lol surely no one will log on with just this as thier name right?"]
     latency_history = []
+    player_count_history = []
     max_graph_lines = 0  # Track the max number of lines printed for the graph
-    last_logged_player_names = []
+    last_logged_player_names = ["random set of names so that it never matches at the start lol surely no one will log on with just this as thier name right?"]
     last_logged_latency = None
 
     while True:
         server_status, player_list, latency = check_server_status(server_address)
         latency_history.append(latency)
-        # Cap the ping (latency) list to 20 entries
+        player_count_history.append(server_status)
+        # Cap the ping (latency) and player count lists to 20 entries
         if len(latency_history) > 20:
             latency_history = latency_history[-20:]
+            player_count_history = player_count_history[-20:]
 
         # Always extract player_names from player_list and sort alphabetically
         player_names = []
@@ -95,13 +98,10 @@ def main():
             if players_detected:
                 players_detected = False
                 last_player_names = []
-            notifier.send_notification(server_status, None)
+            # notifier.send_notification(server_status, None)
 
         # --- Clear previous graph output ONLY (not player status) ---
-        current_graph_lines = len(latency_history) + 5 # 1 for header, 1 for separator
-        # sys.stdout.write('\033[F')  # Move cursor up
-        sys.stdout.write('\033[F')  # Move cursor up
-        sys.stdout.write('\033[F')  # Move cursor up
+        current_graph_lines = len(latency_history) + 3  # 1 for header, 1 for separator, 1 for spacing
         if current_graph_lines > max_graph_lines:
             max_graph_lines = current_graph_lines
         for _ in range(max_graph_lines):
@@ -110,8 +110,8 @@ def main():
 
         # --- Print the latest latency graph ---
         print("Latency graph (ms):")
-        for l in latency_history:
-            print(f"{l:4} ms | {'#' * (l // 10)}")
+        for pc, l in zip(player_count_history, latency_history):
+            print(f"{pc:2} players | {l:4} ms | {'#' * (l // 10)}")
         console_width = os.get_terminal_size().columns
         print("-" * console_width)
 
